@@ -1,0 +1,154 @@
+# 定義菜單，包括名稱和價格
+menu = {
+    1: {"name": "牛肉漢堡", "price": 50},
+    2: {"name": "豬肉漢堡", "price": 45},
+    3: {"name": "馬鈴薯條", "price": 30},
+    4: {"name": "地瓜薯條", "price": 30},
+    5: {"name": "可樂", "price": 25},
+    6: {"name": "雪碧", "price": 25},
+    7: {"name": "雞塊", "price": 35},
+    8: {"name": "沙拉", "price": 40},
+    9: {"name": "蘋果派", "price": 35},
+    10: {"name": "牛奶冰淇淋", "price": 20}
+}
+
+# 顯示菜單
+print("+1餐廳點餐機系統 ")
+for item, info in menu.items():
+    print("%d. %s - $%d" % (item, info["name"], info["price"]))
+
+# 初始化點餐資訊的字典
+order = {}
+# 顯示顧客為內用或外帶
+meals=input("請輸入內用in/外帶out:")
+if meals == "in":
+    num_table = int(input("請輸入顧客桌號："))
+# 詢問用戶點餐項目
+while True:
+    item_number = input("請問您要點什麼？(輸入對應數字, 輸入 'q' 結束點餐)：")
+    if item_number == "q":
+        break
+    elif item_number.isdigit() and int(item_number) in menu:
+        quantity = int(input("請問您需要幾份%s？：" % menu[int(item_number)]["name"]))
+        order[int(item_number)] = {"name": menu[int(item_number)]["name"], "quantity": quantity, "price": menu[int(item_number)]["price"]}  # 將鍵改為菜單項目的數字
+    else:
+        print("輸入無效，請輸入菜單中的數字。")
+
+# 詢問用戶是否有優惠
+discounts = []
+discount = input("您有優惠券嗎？(y/n)：")
+if discount.lower() == "y":
+    discount_amount = float(input("請輸入優惠券折扣金額："))
+    discounts.append("優惠券折扣金額：$%.2f" % discount_amount)
+else:
+    discount_amount = 0
+
+# 詢問用戶付款方式
+payment_method = input("請選擇付款方式(1: 現金, 2: 信用卡)：")
+
+# 根據付款方式進行不同處理
+if payment_method == "2":
+    credit_card_type = input("請選擇信用卡種類(1: Visa, 2: Mastercard, 3:JCB)：")
+    if credit_card_type == "1":
+        credit_card_discount_rate = 0.9  # 信用卡折扣率為 90%
+        discounts.append("信用卡折扣：9折")
+
+    elif credit_card_type == "2":
+        credit_card_discount_rate = 0.95  # 信用卡折扣率為 95%
+        discounts.append("信用卡折扣：95折")
+    elif credit_card_type == "3":
+        credit_card_discount_rate = 0.85  # 信用卡折扣率為 85%
+        discounts.append("信用卡折扣：85折")
+    
+    for item in order.values():
+        item["price"] *= credit_card_discount_rate
+
+if payment_method == "1":  
+    credit_card_discount_rate=1
+# 計算原價
+original_price = sum(item["price"] * item["quantity"] for item in order.values())
+
+# 計算總價格
+total_price = original_price - discount_amount
+total_price *= credit_card_discount_rate
+saved_amount = original_price - total_price
+# 詢問用戶是否有發票載具號碼
+invoice_number = ""
+invoice_option = input("您需要載具嗎？(y/n)：")
+if invoice_option.lower() == "y":
+    invoice_number = input("請輸入發票載具號碼：")
+
+while True:
+    option = input("是否需要修改訂單？(y/n)：")
+    if option.lower() == "y":
+        # 輸入要修改的餐點數量
+        item_number = int(input("請輸入要修改的餐點編號："))
+        if item_number in order:
+            new_quantity = int(input("請輸入新的餐點數量："))
+            order[item_number]["quantity"] = new_quantity
+            print("餐點數量已更新。")
+        else:
+            new_quantity = int(input("請輸入新的餐點數量："))
+            item_name = menu[item_number]["name"]
+            item_price = menu[item_number]["price"]
+            order[item_number] = {"name": item_name, "quantity": new_quantity, "price": item_price}
+            print("餐點已新增。")
+
+        # 重新計算總價格
+        original_price = sum(item["price"] * item["quantity"] for item in order.values())
+        total_price = original_price - discount_amount
+        total_price *= credit_card_discount_rate
+        saved_amount = original_price - total_price
+        print("更新後的總金額：$%.0f元" % total_price)
+    elif option.lower() == "n":
+        print("訂單已確認，謝謝光臨！")
+        break
+
+
+    
+# 顯示點餐資訊
+print("您的點餐資訊如下：")
+for item in order.values():
+    print("%s x %d" % (item["name"], item["quantity"]))
+# 顯示顧客桌號
+if meals =="in":
+    print("顧客桌號為%d" % num_table)
+else:
+    print("外帶")
+#點餐資訊總結
+print("使用優惠：", ", ".join(discounts))
+print("原價：$%.0f元" % original_price)
+print("優惠折扣後金額：$%.0f元" % total_price)
+print("總共省下了%.0f元" % saved_amount)
+if invoice_number:
+    print("發票載具號碼：", invoice_number)
+else:
+    print("未選擇發票載具")
+
+# 開啟檔案以寫入模式
+with open('record.txt', 'a') as file:
+    # 寫入點餐資訊
+    file.write("\n")
+    file.write("點餐資訊：\n")
+    for item in order.values():
+        file.write("%s--%d份\n" % (item["name"], item["quantity"]))
+    
+    # 寫入顧客桌號
+    if meals == "in":
+        file.write("顧客桌號：%d\n" % num_table)
+    else:
+        file.write("外帶\n")
+
+    # 寫入優惠資訊
+    file.write("使用優惠：%s\n" % ", ".join(discounts))
+    
+    # 寫入原價、折扣後金額、省下的金額
+    file.write("原價：%d元\n" % original_price)
+    file.write("優惠折扣後金額：%d元\n" % total_price)
+    file.write("總共省下了%d元\n" % saved_amount)
+    
+    # 寫入發票載具號碼
+    if invoice_number:
+        file.write("發票載具號碼：%s\n" % invoice_number)
+    else:
+        file.write("未選擇發票載具\n")
