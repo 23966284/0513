@@ -1,0 +1,10 @@
+import random
+
+def generate_gmail():
+    username = input("請輸入帳號前面的英文：")
+    random_number = random.randint(1000, 9999)
+    gmail_username = username.lower() + str(random_number) + "@gmail.com"
+    return gmail_username
+
+gmail = generate_gmail()
+print("生成的 Gmail 用戶名:", gmail)
