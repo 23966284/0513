@@ -1,0 +1,51 @@
+def AQI_calculator(CO, PM25, SO2):
+    Range_CO = [0, 4.5, 9.5, 12.5, 15.5, 30.5, 40.5]
+    Range_PM25 = [0, 15.5, 35.5, 54.5, 150.5, 250.5, 350.5]
+    Range_SO2 = [0, 21, 76, 186, 305, 605, 805]
+   
+    AQI_CO = calculate_aqi_linear(CO, Range_CO)
+    AQI_PM25 = calculate_aqi_linear(PM25, Range_PM25)
+    AQI_SO2 = calculate_aqi_linear(SO2, Range_SO2)
+
+    AQI_results = [("CO", AQI_CO), ("PM2.5", AQI_PM25), ("SO2", AQI_SO2)]
+    return AQI_results
+    
+def calculate_aqi_linear(concentration, ranges):
+    AQI_levels = ["Good", "Moderate", "Unhealthy for Sensitive Groups", "Unhealthy", "Very Unhealthy", "Hazardous"]
+
+    if concentration <= ranges[1]:
+        AQI_value = calculate_aqi_linear_helper(concentration, 0, 50, ranges[0], ranges[1])
+        AQI_level = AQI_levels[0]
+    elif concentration <= ranges[2]:
+        AQI_value = calculate_aqi_linear_helper(concentration, 51, 100, ranges[1], ranges[2])
+        AQI_level = AQI_levels[1]
+    elif concentration <= ranges[3]:
+        AQI_value = calculate_aqi_linear_helper(concentration, 101, 150, ranges[2], ranges[3])
+        AQI_level = AQI_levels[2]
+    elif concentration <= ranges[4]:
+        AQI_value = calculate_aqi_linear_helper(concentration, 151, 200, ranges[3], ranges[4])
+        AQI_level = AQI_levels[3]
+    elif concentration <= ranges[5]:
+        AQI_value = calculate_aqi_linear_helper(concentration, 201, 300, ranges[4], ranges[5])
+        AQI_level = AQI_levels[4]
+    else:
+        AQI_value = calculate_aqi_linear_helper(concentration, 301, 500, ranges[5], ranges[6])
+        AQI_level = AQI_levels[5]
+
+    return AQI_value, AQI_level
+
+def calculate_aqi_linear_helper(concentration, I_low, I_high, C_low, C_high):
+    AQI = ((I_high - I_low) / (C_high - C_low)) * (concentration - C_low) + I_low
+    return round(AQI)
+
+# 輸入濃度值
+CO_concentration = float(input("請輸入 CO 濃度："))
+PM25_concentration = float(input("請輸入 PM2.5 濃度："))
+SO2_concentration = float(input("請輸入 SO2 濃度："))
+
+# 計算 AQI 值
+AQI_values = AQI_calculator(CO_concentration, PM25_concentration, SO2_concentration)
+
+
+for pollutant, (AQI_value, AQI_level) in AQI_values:
+    print(f"{pollutant}: AQI value: {AQI_value}, AQI level: {AQI_level}")
