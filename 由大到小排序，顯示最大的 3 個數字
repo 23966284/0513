@@ -1,0 +1,21 @@
+def get_top_three(numbers):
+ 
+    sorted_numbers = sorted(numbers, reverse=True)
+
+    return sorted_numbers[:3]
+
+
+try:
+    numbers = []
+    print("請輸入十個數字：")
+    for i in range(10):
+        num = int(input(f"請輸入第 {i + 1} 個數字："))
+        numbers.append(num)
+    
+    top_three = get_top_three(numbers)
+    print("最大的三個數字是：")
+    for number in top_three:
+        print(number)
+except ValueError:
+    print("輸入無效，請輸入數字。")
+
