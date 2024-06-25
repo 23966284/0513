@@ -1,0 +1,14 @@
+def is_leap_year(year):
+    if (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0):
+        return True
+    else:
+        return False
+
+try:
+    year = int(input("請輸入一個西元年份："))
+    if is_leap_year(year):
+        print(f"{year} 是閏年。")
+    else:
+        print(f"{year} 是平年。")
+except VE:
+    print("輸入無效，請輸入一個有效的西元年份。")
