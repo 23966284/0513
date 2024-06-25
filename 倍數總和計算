@@ -1,0 +1,27 @@
+if a > b:
+        print("輸入無效，請確保 a <= b。")
+    else:
+        multiples = []
+       
+        for i in range(a, b + 1):
+            if i % 4 == 0 or i % 9 == 0:
+                multiples.append(i)
+
+        
+        for index, number in enumerate(multiples):
+            print(f"{number:<4}", end='')
+            if (index + 1) % 10 == 0:
+                print()  
+
+       
+        if len(multiples) % 10 != 0:
+            print()
+
+       
+        count = len(multiples)
+        total_sum = sum(multiples)
+        print(f"倍數的個數：{count}")
+        print(f"倍數的總和：{total_sum}")
+
+except VE:
+    print("輸入無效，請輸入正整數。")
